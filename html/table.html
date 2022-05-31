@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="1uplabs">
+    <title>手机侦察兵</title>
+
+    <link rel="icon" href="/static/usb-plug.svg" sizes="64x64" type="image/svg">
+
+    <link href="/static/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/bootstrap-icons-1.8.2/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.css">
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <script type="text/javascript" src="/static/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="/static/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.20.2/dist/bootstrap-table.min.js"></script>
+  </head>
+  
+<body>
+
+<header class="navbar navbar-dark sticky-top bg-red flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
+    <i class="bi bi-usb-plug"></i>
+    手机侦察兵 <sup>1.0</sup>
+  </a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-nav">
+    <div class="nav-item text-nowrap">
+      <a class="nav-link px-3" href="#"></a>
+    </div>
+  </div>
+</header>
+
+<div class="container-fluid" id="app">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="position-sticky pt-3">
+        <h6 v-if="dev" class="sidebar-heading">
+          {{ dev.brand }} {{ dev.name }}
+        </h6>
+        <h6 v-else class="sidebar-heading">
+          等待手机连接USB...
+        </h6>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==1 }" @click="topage(1)" href="#">
+              <span data-feather="home"></span>
+              <i class="bi bi-cpu"></i>
+              设备信息
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==2 }" @click="topage(2)" href="#">
+              <i class="bi bi-balloon"></i>
+              应用侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==3 }" href="#">
+              <i class="bi bi-file-earmark-image"></i>
+              照片侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==4 }" href="#">
+              <i class="bi bi-file-earmark-music"></i>
+              音频侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==5 }" href="#">
+              <i class="bi bi-camera-video"></i>
+              视频侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==6 }" href="#">
+              <i class="bi bi-terminal"></i>
+              系统日志
+            </a>
+          </li>
+        </ul>
+
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <span>
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-primary">已安装</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">已删除</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-default">
+            <i class="bi bi-filetype-xls"></i>
+            导出
+          </button>
+        </span>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <input class="form-control form-control-sm me-2" type="search" placeholder="搜索" aria-label="Search">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table  table-hover"
+          data-toggle="table"
+        >
+          <thead class="table-light">
+            <tr>
+              <th scope="col" data-sortable="true">包名</th>
+              <th scope="col">大小</th>
+              <th scope="col" data-sortable="true">SDK版本</th>
+              <th scope="col" data-sortable="true">版本</th>
+              <th scope="col" data-sortable="true">安装时间</th>
+              <th scope="col">上次时间</th>
+              <th scope="col" data-sortable="true">使用时长</th>
+              <th scope="col" data-sortable="true">打开次数</th>
+            </tr>
+          </thead>
+          <tbody><tr><td>com.fenqile.fenqile</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>6.17.1</td> <td>2021-07-16 18:17:24</td> <td>2022-01-16 13:34:31</td> <td>01:53</td> <td>3</td></tr><tr><td>com.github.shadowsocks</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>4.8.7</td> <td>2019-12-08 19:26:10</td> <td>2022-05-26 21:33:11</td> <td>14:15</td> <td>212</td></tr><tr><td>com.hpbr.bosszhipin</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>10.040</td> <td>2020-04-21 21:45:47</td> <td>2022-05-25 20:37:21</td> <td>11:27:56</td> <td>265</td></tr><tr><td>plus.H5E093301</td> <td></td> <td>minSdk=19 targetSdk=28</td> <td>1.0.1</td> <td>2022-03-21 14:50:41</td> <td>2022-05-25 16:46:30</td> <td>17:16</td> <td>10</td></tr><tr><td>com.wepie.weplay</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>5.14.6</td> <td>2021-05-26 12:54:08</td> <td>2022-05-28 08:55:28</td> <td>147:08:50</td> <td>623</td></tr><tr><td>com.shuhekeji</td> <td></td> <td>minSdk=19 targetSdk=29</td> <td>5.9.58</td> <td>2022-05-19 22:13:07</td> <td>2022-05-19 22:15:20</td> <td>02:08</td> <td>1</td></tr><tr><td>com.sankuai.meituan</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>11.20.205</td> <td>2018-08-08 00:01:00</td> <td>2022-03-29 12:36:00</td> <td>01:13</td> <td>3</td></tr><tr><td>com.youku.phone</td> <td></td> <td>minSdk=21 targetSdk=30</td> <td>10.2.22</td> <td>2018-08-08 00:01:00</td> <td>2022-05-17 21:10:13</td> <td>1:34:06</td> <td>8</td></tr><tr><td>com.x.addon.qrscan</td> <td></td> <td>minSdk=14 targetSdk=28</td> <td>1.0.3</td> <td>2021-06-20 13:25:47</td> <td>2022-05-06 11:51:52</td> <td>00:00</td> <td>3</td></tr><tr><td>com.hexin.plat.android</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>10.54.01</td> <td>2022-04-22 13:29:51</td> <td>2022-05-26 20:40:46</td> <td>37:32</td> <td>29</td></tr><tr><td>com.xinhang.mobileclient</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>7.0.3</td> <td>2020-01-16 15:17:53</td> <td>1970-01-01 07:59:47</td> <td>00:00</td> <td>0</td></tr><tr><td>cn.gov.tax.its</td> <td></td> <td>minSdk=22 targetSdk=28</td> <td>1.8.0</td> <td>2020-06-28 11:09:25</td> <td>2022-03-12 09:08:54</td> <td>21:46</td> <td>7</td></tr><tr><td>com.meituan.qcs.c.android</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>2.18.3</td> <td>2022-03-01 23:20:07</td> <td>2022-05-02 12:55:13</td> <td>22:22</td> <td>14</td></tr><tr><td>com.MobileTicket</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>5.5.1.4</td> <td>2020-01-11 19:37:13</td> <td>1970-01-01 07:59:47</td> <td>00:00</td> <td>0</td></tr><tr><td>com.fenqile.lehuaka</td> <td></td> <td>minSdk=18 targetSdk=26</td> <td>1.4.2</td> <td>2022-01-16 13:25:26</td> <td>2022-01-16 13:44:26</td> <td>05:43</td> <td>9</td></tr><tr><td>me.ele</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>10.8.18</td> <td>2019-12-08 20:14:39</td> <td>2022-05-17 16:56:56</td> <td>3:04:59</td> <td>36</td></tr><tr><td>com.tencent.mm</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>8.0.22</td> <td>2022-03-01 20:26:03</td> <td>2022-05-28 08:46:17</td> <td>52:58:44</td> <td>1863</td></tr><tr><td>com.gzhi.neatreader.r2.main</td> <td></td> <td>minSdk=23 targetSdk=31</td> <td>8.0.6</td> <td>2021-11-22 20:25:04</td> <td>2021-12-28 10:35:32</td> <td>00:04</td> <td>1</td></tr><tr><td>com.sdu.didi.psnger</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>6.2.4</td> <td>2020-01-25 16:34:05</td> <td>1970-01-01 07:59:47</td> <td>00:00</td> <td>0</td></tr><tr><td>com.chinamworld.bocmbci</td> <td></td> <td>minSdk=14 targetSdk=27</td> <td>7.3.2</td> <td>2021-06-25 20:18:04</td> <td></td> <td></td> <td>0</td></tr><tr><td>com.hanweb.izhengzhou.android</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>4.0.5</td> <td>2022-04-11 19:02:09</td> <td>2022-05-09 09:37:07</td> <td>17:30</td> <td>11</td></tr><tr><td>com.huawei.fans</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>10.0.11.300</td> <td>2018-08-08 00:01:00</td> <td>2022-02-20 14:50:47</td> <td>00:00</td> <td>1</td></tr><tr><td>org.telegram.messenger.web</td> <td></td> <td>minSdk=16 targetSdk=30</td> <td>8.4.3</td> <td>2021-09-27 17:17:14</td> <td>2022-05-26 06:40:08</td> <td>7:00:04</td> <td>130</td></tr><tr><td>cn.com.spdb.mobilebank.per</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>11.3.3</td> <td>2021-03-05 12:26:57</td> <td>2022-05-20 14:29:29</td> <td>53:11</td> <td>27</td></tr><tr><td>com.amazon.kindlefc</td> <td></td> <td>minSdk=28 targetSdk=30</td> <td>8.52.0.100(1.3.256668.0-kfc)</td> <td>2021-08-24 23:39:30</td> <td>2021-12-21 09:57:02</td> <td>1:34:38</td> <td>3</td></tr><tr><td>com.ylzinfo.chinahrss</td> <td></td> <td>minSdk=18 targetSdk=27</td> <td>2.2.0</td> <td>2022-03-26 15:22:21</td> <td>2022-04-06 12:34:15</td> <td>06:31</td> <td>7</td></tr><tr><td>com.xunmeng.pinduoduo</td> <td></td> <td>minSdk=21 targetSdk=27</td> <td>6.12.1</td> <td>2022-02-20 14:04:03</td> <td>2022-03-24 08:52:35</td> <td>5:31:28</td> <td>119</td></tr><tr><td>com.tencent.weread</td> <td></td> <td>minSdk=23 targetSdk=31</td> <td>6.2.4</td> <td>2022-05-14 20:30:16</td> <td>2022-05-27 10:12:59</td> <td>1:51:13</td> <td>5</td></tr><tr><td>com.twitter.android</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>8.29.0-release.00</td> <td>2020-02-24 14:09:45</td> <td>2022-05-26 06:36:09</td> <td>7:18:42</td> <td>44</td></tr><tr><td>com.foxit.mobile.pdf.lite</td> <td></td> <td>minSdk=23 targetSdk=28</td> <td>9.4.31101</td> <td>2020-01-16 22:20:28</td> <td>2022-03-03 12:45:13</td> <td>00:07</td> <td>1</td></tr><tr><td>com.ss.android.article.news</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>8.8.1</td> <td>2020-05-16 13:44:26</td> <td>2022-05-25 17:52:34</td> <td>9:44:38</td> <td>57</td></tr><tr><td>com.android.icredit</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>15.6.0</td> <td>2020-06-21 04:12:39</td> <td>2022-05-28 09:23:24</td> <td>4:09:33</td> <td>85</td></tr><tr><td>com.android.chrome</td> <td></td> <td>minSdk=24 targetSdk=30</td> <td>86.0.4240.99</td> <td>2020-10-20 09:18:13</td> <td>2022-02-12 08:03:36</td> <td>4:00:55</td> <td>15</td></tr><tr><td>cn.com.cmbc.newmbank</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>6.23</td> <td>2020-06-22 11:21:13</td> <td>2022-05-19 09:56:16</td> <td>51:49</td> <td>35</td></tr><tr><td>com.tencent.mobileqq</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>8.8.90</td> <td>2020-02-04 11:35:23</td> <td>2022-03-11 16:28:43</td> <td>13:51</td> <td>4</td></tr><tr><td>com.ss.android.lark</td> <td></td> <td>minSdk=22 targetSdk=30</td> <td>5.12.4</td> <td>2021-05-08 18:02:10</td> <td>2022-05-26 19:04:26</td> <td>1:06:53</td> <td>122</td></tr><tr><td>cn.com.higgs.tilemaster3d</td> <td></td> <td>minSdk=21 targetSdk=30</td> <td>1.5.5</td> <td>2022-04-26 16:51:52</td> <td>2022-05-17 18:11:38</td> <td>54:26</td> <td>4</td></tr><tr><td>com.baidu.BaiduMap</td> <td></td> <td>minSdk=21 targetSdk=30</td> <td>16.0.0</td> <td>2018-08-08 00:01:00</td> <td>2022-05-27 19:35:57</td> <td>3:24:38</td> <td>86</td></tr><tr><td>com.zhihu.android</td> <td></td> <td>minSdk=21 targetSdk=30</td> <td>8.19.0</td> <td>2019-12-10 12:03:03</td> <td>2022-05-21 15:09:31</td> <td>2:33:28</td> <td>16</td></tr><tr><td>com.duozhuayu.dejavu</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>2.7.0</td> <td>2020-03-31 16:05:36</td> <td>1970-01-01 07:59:47</td> <td>00:00</td> <td>0</td></tr><tr><td>com.taptap</td> <td></td> <td>minSdk=21 targetSdk=26</td> <td>2.25.0-rel.400003</td> <td>2020-02-21 09:14:06</td> <td>2022-05-23 09:17:17</td> <td>44:39</td> <td>32</td></tr><tr><td>com.binance.dev</td> <td></td> <td>minSdk=21 targetSdk=30</td> <td>2.39.3</td> <td>2021-05-03 14:27:06</td> <td>2022-05-13 12:52:01</td> <td>7:47:24</td> <td>212</td></tr><tr><td>ctrip.android.view</td> <td></td> <td>minSdk=23 targetSdk=29</td> <td>8.47.6</td> <td>2018-08-08 00:01:00</td> <td></td> <td></td> <td>0</td></tr><tr><td>com.wukongtv.wkcast</td> <td></td> <td>minSdk=17 targetSdk=27</td> <td>1.6.0.4</td> <td>2020-02-14 14:44:50</td> <td>2022-04-13 16:52:01</td> <td>15:26</td> <td>3</td></tr><tr><td>com.neusoft.smartcity.henan</td> <td></td> <td>minSdk=19 targetSdk=28</td> <td>1.3.08</td> <td>2022-03-26 15:35:34</td> <td>2022-04-19 16:09:11</td> <td>05:55</td> <td>14</td></tr><tr><td>com.alibaba.aliyun</td> <td></td> <td>minSdk=16 targetSdk=26</td> <td>5.0.8</td> <td>2021-02-14 09:57:50</td> <td>2022-05-12 17:40:19</td> <td>02:31</td> <td>11</td></tr><tr><td>com.jincheng.supercaculator</td> <td></td> <td>minSdk=16 targetSdk=28</td> <td>21.0.1</td> <td>2020-11-28 21:17:21</td> <td>2022-05-16 09:19:46</td> <td>30:39</td> <td>24</td></tr><tr><td>com.ss.android.article.video</td> <td></td> <td>minSdk=18 targetSdk=29</td> <td>6.6.4</td> <td>2020-02-14 15:01:05</td> <td>2022-04-30 20:59:58</td> <td>4:22:00</td> <td>7</td></tr><tr><td>com.baidu.netdisk</td> <td></td> <td>minSdk=21 targetSdk=28</td> <td>11.24.3</td> <td>2020-05-26 21:45:11</td> <td>2022-05-26 08:41:46</td> <td>4:18:12</td> <td>32</td></tr><tr><td>com.cmbc.cc.mbank</td> <td></td> <td>minSdk=21 targetSdk=27</td> <td>8.2.2</td> <td>2021-05-30 17:41:00</td> <td>2022-05-19 10:00:51</td> <td>43:26</td> <td>25</td></tr><tr><td>com.taobao.taobao</td> <td></td> <td>minSdk=14 targetSdk=28</td> <td>10.12.10</td> <td>2018-08-08 00:01:00</td> <td>2022-05-23 15:22:46</td> <td>2:15:08</td> <td>34</td></tr><tr><td>com.timemicrotech.miaozou</td> <td></td> <td>minSdk=21 targetSdk=31</td> <td>2.22.0424.1000</td> <td>2020-11-01 13:06:31</td> <td>1970-01-01 07:59:47</td> <td>00:00</td> <td>0</td></tr><tr><td>tv.danmaku.bili</td> <td></td> <td>minSdk=21 targetSdk=31</td> <td>6.74.0</td> <td>2019-12-08 20:10:18</td> <td>2022-05-28 00:22:50</td> <td>446:03:45</td> <td>739</td></tr><tr><td>com.eg.android.AlipayGphone</td> <td></td> <td>minSdk=18 targetSdk=29</td> <td>10.2.63.8810</td> <td>2018-08-08 00:01:00</td> <td>2022-05-27 19:24:55</td> <td>12:08:56</td> <td>580</td></tr><tr><td>im.token.app</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>2.9.7</td> <td>2021-11-18 11:03:50</td> <td>1970-01-01 07:59:47</td> <td>00:00</td> <td>0</td></tr><tr><td>cn.wps.moffice_eng</td> <td></td> <td>minSdk=21 targetSdk=29</td> <td>13.25.0</td> <td>2018-08-08 00:01:00</td> <td></td> <td></td> <td>0</td></tr></tbody>
+
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+--- TYPE ---
+
+// 屏幕截图: /screen/snap.png
+
+//  Serial        string `json:"serial"`      // 序列号: FJR6R19B23007240
+    Name          string `json:"name"`        // 设备名称:AQM-AL00
+    Model         string `json:"model"`       // 型号:AQM_AL00
+    ScreenSize    string `json:"screen_size"` // 屏幕宽高
+    Battery       int    `json:"battery"`     // 电量: 95 电量95%
+    Brand         string `json:"brand"`       // 品牌HUAWEI
+    CpuInfo       string `json:"cpu_info"`    // 处理器[HUAWEI Kirin 710F]
+    Operator      string `json:"operator"`    // 运营商[,中国移动]
+    Mem           string `json:"mem"`         // 总内存
+    Disk          string `json:"disk"`        // 总磁盘G
+    DiskAvailable string `json:"diska"`       // 可用空间G
+    IP            string `json:"ip"`
+    Uptime        int    `json:"uptime"` // 开机时间(秒)
+Device# serial:string name:string model:string screen:string battery:int brand:string
+        cpu_info:string operator:string mem:string disk:string diska:string ip:string 
+        uptime:int;
+
+// 包信息
+Package#    
+    Name         string `json:"name"` // 包名 com.huawei.appmarket
+    path         string // apk路径
+    Size         string `json:"size"`           // 包大小
+    InstallTime  string `json:"install_time"`   // 安装时间
+    SdkVersion   string `json:"sdk_version"`    // SDK版本 minSdk=21 targetSdk=28
+    Version      string `json:"version"`        // 版本 10.8.18
+    TimeUsed     string `json:"time_used"`      // 使用时长
+    LastTimeUsed string `json:"last_time_used"` // 上次使用时间
+    Launch       int    `json:"launch"`         // 启动次数
+
+--- FUNCTION ---
+
+// 获取当前设备信息
+// Error: 当前没有设备
+device.info# = Device;
+
+// 获取应用列表
+device.plist# = [Package];
+
+// 获取应用名和图标 name:包名
+device.labelicon# name:string = {
+    label: "xxx",
+    icon: "xxx/xxx.png"
+}

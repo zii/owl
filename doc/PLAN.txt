@@ -1,0 +1,137 @@
+手机侦察兵
+owl
+===============
+
+网上问题:
+https://android.stackexchange.com/questions/83030/history-of-installed-uninstalled-apps
+
+安卓库:
+https://github.com/zach-klippenstein/goadb
+
+苹果库:
+https://github.com/danielpaulus/go-ios
+
+下载aapt:
+https://androidaapt.com/
+
+下载手机arm版aapt:
+https://github.com/theaetetus/AndroidApkMaker/blob/master/android_apkmaker/src/main/assets/aapt-arm-pie
+
+# 把aapt工具推到手机上
+adb push aapt-arm-pie /data/local/tmp/aapt
+adb shell chmod +x /data/local/tmp/aapt
+# 调用aapt来获取应用名和icon
+adb shell /data/local/tmp/aapt d badging /data/app/com.MobileTicket-ZPrwaZmPCJRa4VwXIb2Z2w==/base.apk | grep application
+# 提取出应用图标
+adb shell unzip /data/app/com.fenqile.lehuaka-kqFxltf9u7R8AL-bfs34AA==/base.apk "res/miic_fql_launcher.png" -p > icon.png
+
+# 使用情况统计
+adb shell dumpsys usagestats
+
+# 检查设备屏幕是否打开
+adb shell dumpsys power | grep mHoldingDisplaySuspendBlocker
+
+# 列出所有的服务
+adb shell dumpsys -l
+
+# 查看应用列表
+adb shell pm list packages
+
+# 查看已用的第三方应用
+adb shell pm list packages -u -3
+
+# 屏幕分辨率
+adb shell wm size
+
+# android id
+adb shell settings get secure android_id
+
+# 设备id
+adb shell dumpsys iphonesubinfo
+
+# 系统版本
+adb shell getprop ro.build.version.release
+
+# 查看局域网ip
+adb shell netcfg | grep wlan0
+
+# 屏幕截图
+adb shell screencap -p > sc.png
+
+# 内存信息
+adb shell cat /proc/meminfo
+
+# 
+adb shell dumpsys usagestats
+
+# 
+adb shell dumpsys package
+
+# 提取icon的方法
+https://blog.csdn.net/h1986y/article/details/123737172
+
+# 通过包名抓取app名
+https://app.mi.com/details?id=com.duozhuayu.dejavu
+https://www.coolapk.com/apk/com.ss.android.article.news
+
+# 可以测到哪些设备信息?
+getdeviceinfo()
+    serial no序列号: FJR6R19B23007240
+    Product设备名称:AQM-AL00 
+    Model型号:AQM_AL00 
+    DeviceInfo:HWAQM-H 
+adb shell wm size
+    屏幕: 1080*2400
+adb shell dumpsys battery
+    level: 95 电量95%
+adb shell getprop
+    ro.product.brand 品牌Huawei
+    [ro.config.cpu_info_display]: 处理器[HUAWEI Kirin 710F]
+    [ro.product.cpu.abi]: [arm64-v8a]
+    [ro.hardware]: CPU品牌[kirin710]
+    [gsm.operator.alpha]: 运营商[,中国移动]
+    [gsm.operator.alpha0]: []
+    [gsm.operator.alpha1]: [中国移动]
+adb shell dumpsys meminfo
+    Total RAM: 7,884,744K (status normal) 运行内存
+adb shell df -h /sdcard
+    Filesystem     Size  Used Avail Use% Mounted on
+    /data/media    111G   59G   51G  54% /storage/emulated
+    总容量/可用空间
+adb shell netcfg
+    wlan0    UP                                 192.168.3.6/24
+    IP
+adb shell cat /proc/uptime
+    371323.67（已开机时间秒） 1357165.37
+adb exec-out screencap -p > sc.png
+    屏幕截图
+adb shell dumpsys batterystats
+    电池容量
+    Estimated power use (mAh):
+    Capacity: 4000, Computed drain: 18.1, actual drain: 0
+
+# 可以得到哪些包信息?
+adb shell pm list packages -u -s
+    系统包列表
+adb shell pm list packages -u -3 -f
+    第三方包名列表
+adb shell du -h /data/app/com.cmbc.cc.mbank--ggnamIsmPnM36yWiySYNA==/base.apk
+    包大小
+adb shell dumpsys package <包名>
+    firstInstallTime=2019-12-08 20:14:39 首次安装时间
+    lastUpdateTime=2022-05-25 19:36:26 上次更新时间
+    versionCode=876 minSdk=21 targetSdk=28
+    versionName=10.8.18
+adb shell dumpsys usagestats
+    In-memory yearly stats
+    package=me.ele totalTimeUsed="3:04:59" lastTimeUsed="2022-05-17 16:56:56" totalTimeVisible="3:49:07" lastTimeVisible="2022-05-17 16:56:56" totalTimeFS="00:00" lastTimeFS="1970-01-01 07:59:15" appLaunchCount=36 
+    package=com.android.browser totalTime="2:13:57" lastTime="2022/5/31 上午9:43" 
+    使用时长, 上次使用时间, 打开次数
+aapt dump badging <xx.apk>
+    application-label:'Shadowsocks'
+    application-label-zh-CN:'Shadowsocks'
+    应用名
+
+# 相册视频文件位置
+/sdcard/Pictures
+/sdcard/DCIM

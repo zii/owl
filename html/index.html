@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="1uplabs">
+    <title>手机侦察兵</title>
+
+    <link rel="icon" href="/static/usb-plug.svg" sizes="64x64" type="image/svg">
+
+    <link href="/static/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/bootstrap-icons-1.8.2/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/bootstrap-table.min.css">
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <script type="text/javascript" src="/static/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="/static/vue.min.js"></script>
+    <script src="/static/bootstrap-table.min.js"></script>
+    <script src="/static/bootstrap-table-vue.min.js"></script>
+  </head>
+  
+  <body>
+    
+<header class="navbar navbar-dark sticky-top bg-red flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
+    <i class="bi bi-usb-plug"></i>
+    手机侦察兵 <sup>1.0</sup>
+  </a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-nav">
+    <div class="nav-item text-nowrap">
+      <a class="nav-link px-3" href="#"></a>
+    </div>
+  </div>
+</header>
+
+<div class="container-fluid" id="app">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="position-sticky pt-3">
+        <h6 v-if="dev" class="sidebar-heading">
+          {{ dev.brand }} {{ dev.name }}
+        </h6>
+        <h6 v-else class="sidebar-heading">
+          等待手机连接USB...
+        </h6>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==1 }" @click="topage(1)" href="#">
+              <span data-feather="home"></span>
+              <i class="bi bi-cpu"></i>
+              设备信息
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==2 }" @click="topage(2)" href="#">
+              <i class="bi bi-balloon"></i>
+              应用侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==3 }" href="#">
+              <i class="bi bi-file-earmark-image"></i>
+              照片侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==4 }" href="#">
+              <i class="bi bi-file-earmark-music"></i>
+              音频侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==5 }" href="#">
+              <i class="bi bi-camera-video"></i>
+              视频侦测
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{ active:page==6 }" href="#">
+              <i class="bi bi-terminal"></i>
+              系统日志
+            </a>
+          </li>
+        </ul>
+
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" v-if="!dev&&!loading">
+      <div class="d-flex align-items-center justify-content-center" style="height: 80vh">
+        <div class="spinner-border spinner-border-sm m-1" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="fw-bold">
+          打开手机USB调试模式并连接数据线...
+        </div>
+      </div>
+    </main>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" v-if="page>0&&loading">
+      <div class="d-flex align-items-center justify-content-center" style="height: 80vh">
+        <div class="spinner-border spinner-border-sm m-1" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="fw-bold">
+          正在读取数据...
+        </div>
+      </div>
+    </main>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" v-if="page==1&&dev&&!loading">
+      <div class="d-flex flex-row justify-content-start page1">
+        <div class="p-2 d-flex flex-column justify-content-start">
+          <div class="phone-container">
+            <div class="phone">
+              <img :src="snapshot" alt="" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="p-2 flex-fill flex-column" style="margin-left:1.5rem;max-width:500px">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td colspan="2" class="clearfix">
+                  <div class="left text-primary">{{ dev.name }}</div>
+                  <div class="right">
+                    电量 <i class="bi bi-battery-charging"></i> {{ dev.battery }}%
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="left">品牌</div>
+                  <div class="right">{{ dev.brand }}</div>
+                </td>
+                <td class="">
+                  <div class="left">序列号</div>
+                  <div class="right">{{ dev.serial }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="left">屏幕分辨率</div>
+                  <div class="right">{{ dev.screen }}</div>
+                </td>
+                <td class="">
+                  <div class="left">型号</div>
+                  <div class="right">{{ dev.model }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="left">处理器</div>
+                  <div class="right">{{ dev.cpu_info }}</div>
+                </td>
+                <td class="">
+                  <div class="left">运营商</div>
+                  <div class="right">{{ dev.operator }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="left">总内存</div>
+                  <div class="right">{{ dev.mem }}</div>
+                </td>
+                <td class="">
+                  <div class="left">容量</div>
+                  <div class="right">{{ dev.diska }}/{{ dev.disk }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="left">IP</div>
+                  <div class="right">{{ dev.ip }}</div>
+                </td>
+                <td class="">
+                  <div class="left">开机时长</div>
+                  <div class="right">{{ dev.uptime|uptime }}</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary">重启</button>
+            <button type="button" class="btn btn-primary">关机</button>
+            <button type="button" class="btn btn-primary" @click="refresh(1)">
+              <i class="bi bi-arrow-clockwise"></i>
+              刷新
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" v-if="page==2&&plist&&!loading">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <span>
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm" :class="{ 'btn-primary':ptab==1, 'btn-outline-secondary':ptab!=1 }" @click="ptab=1">已安装</button>
+            <button type="button" class="btn btn-sm" :class="{ 'btn-primary':ptab==2, 'btn-outline-secondary':ptab!=2 }" @click="ptab=2">已删除</button>
+          </div>
+            <a type="button" class="btn btn-sm btn-default" href="/v1/export">
+              <i class="bi bi-filetype-xls"></i>
+              导出
+            </a>
+            <button type="button" class="btn btn-sm btn-default" @click="refresh(2)">
+              <i class="bi bi-arrow-clockwise"></i>
+              刷新
+            </button>
+        </span>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <input class="form-control form-control-sm me-2" type="search" placeholder="搜索" v-model="keyword">
+        </div>
+      </div>
+
+      <div v-show="ptab==1" >
+        <bootstrap-table :columns="p_columns" :data="pdata" :options="p_options" class="table-hover"></bootstrap-table>
+      </div>
+
+      <div v-show="ptab==2">
+        <table class="table table-bordered table-hover w-50">
+          <thead>
+            <tr>
+              <th scope="col">已删除的包名</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(p, index) in pdata_uninstall">
+              <td scope="col">{{ p }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script type="text/javascript">
+function pad(num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+}
+
+var app = new Vue({
+  el: '#app',
+  components: {
+    'BootstrapTable': BootstrapTable
+  },
+  data: {
+    page: 1, // 0:等待中 1:设备信息 2:app列表 3:照片 4:音频 5:视频 6:日志
+    dev: null, // 当前设备
+    p_columns: [
+      {
+        title: '应用名',
+        field: 'label',
+        sortable: true,
+        formatter: function(v) {
+          if (!v) {
+            return `<div class="spinner-border spinner-border-sm m-1" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>`
+          }
+          return v;
+        }
+      },
+      {
+        title: '图标',
+        field: 'icon',
+        sortable: false,
+        formatter: function(v) {
+          if (!v) {
+            return `<div class="spinner-border spinner-border-sm m-1" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>`
+          }
+          return `<img src="${v}" width="32" height="32">`;
+        },
+      },
+      {
+        title: '包名',
+        field: 'name',
+        sortable: true,
+      },
+      {
+        title: '大小',
+        field: 'size',
+        sortable: true,
+        sorter: sizeSorter,
+      },
+      {
+        title: '版本',
+        field: 'version',
+        sortable: true,
+        sorter: versionSorter,
+      },
+      {
+        title: '安装时间',
+        field: 'install_time',
+        sortable: true,
+      },
+      {
+        title: '上次时间',
+        field: 'last_time_used',
+        sortable: true,
+      },
+      {
+        title: '使用时长',
+        field: 'time_used',
+        sortable: true,
+        sorter: usedtimeSorter,
+      },
+      {
+        title: '打开次数',
+        field: 'launch',
+        sortable: true,
+        sorter: intSorter,
+      },
+    ],
+    p_options: {
+      search: false,
+      showColumns: false,
+      sortName: 'launch',
+      sortOrder: 'desc',
+    },
+    plist: null, // 应用列表
+    loading: false,
+    ptab: 1, // 1已安装 2已删除
+    keyword: "", // 搜索词
+  },
+  filters: {
+    uptime: function(a) {
+      let h = Math.floor(a / 3600);
+      let m = Math.floor(a % 3600 / 60);
+      let s = a % 3600 % 60;
+      return `${h}:${pad(m,2)}:${pad(s,2)}`;
+    }
+  },
+  computed: {
+    snapshot: function() {
+      if (!this.dev) {
+        return "";
+      }
+      return "/screen/snap.png?"+Math.random();
+    },
+    pdata: function() {
+      let data = [];
+      if (!this.plist)
+        return [];
+      if (!this.plist.install)
+        return [];
+      for (let p of this.plist.install) {
+        if (this.keyword != "" && p.label.indexOf(this.keyword)<0 && p.name.indexOf(this.keyword)<0) {
+          continue;
+        }
+        data.push(p);
+      }
+      return data;
+    },
+    pdata_uninstall: function() {
+      let data = [];
+      if (!this.plist)
+        return [];
+      if (!this.plist.uninstall)
+        return [];
+      for (let p of this.plist.uninstall) {
+        if (this.keyword != "" && p.indexOf(this.keyword)<0 && p.indexOf(this.keyword)<0) {
+          continue;
+        }
+        data.push(p);
+      }
+      return data;
+    }
+  },
+  created() {
+  },
+  methods: {
+    refresh: function(p) {
+      if (p == 1) {
+        this.dev = null;
+      } else if (p == 2) {
+        this.plist = null;
+      }
+      this.topage(p);
+      return false;
+    },
+    close: function() {
+      this.dev = null;
+      this.plist = null;
+      this.loading = false;
+    },
+    topage: function(p) {
+      this.page = p;
+      var self = this;
+      if (p == 1 && !this.dev) {
+        this.loading = true;
+        this.readinfo().then(function(){
+          self.loading = false;
+        });
+      } else if (p == 2 && !this.plist) {
+        this.loading = true;
+        this.readplist().then(function(){
+          self.loading = false;
+        });
+      }
+      return false;
+    },
+    readinfo: function() {
+      var self = this;
+      return fetch("/v1/device/info", {
+          method: 'POST',
+      }).then(function(rsp) {
+          let data = rsp.json();
+          return data;
+      }).then(function(data) {
+          if (data.ok) {
+            self.dev = data.result;
+          }
+      });
+    },
+    readplist: function() {
+      var self = this;
+      return fetch("/v1/device/plist", {
+          method: 'POST',
+      }).then(function(rsp) {
+          let data = rsp.json();
+          return data;
+      }).then(function(data) {
+          if (data.ok) {
+            self.plist = data.result;
+            for (let p of self.plist.install) {
+              if (!p.label) {
+                self.loadlabel(p);
+              }
+            }
+          } else {
+            self.plist = null;
+          }
+      });
+    },
+    loadlabel: function(p) {
+      if (p.label) 
+        return;
+      let formData = new FormData();
+      formData.append('name', p.name);
+      fetch("/v1/device/labelicon", {
+          method: 'POST',
+          body: formData,
+      }).then(function(rsp) {
+          let data = rsp.json();
+          return data;
+      }).then(function(data) {
+          if (data.ok) {
+            p.label = data.result.label;
+            p.icon = data.result.icon;
+          }
+      });
+    },
+  }
+});
+
+app.topage(1);
+
+function wsconnect() {
+  var ws = new WebSocket("ws://" + document.location.host + "/ws");
+  return ws;
+}
+
+var ws = wsconnect();
+console.log(ws);
+ws.onopenn = function(evt) {
+  console.log('ws open');
+};
+ws.onclose = function (evt) {
+    console.log('ws close');
+    app.close();
+    setInterval(function() {
+      if (ws.readyState == 3) {
+        ws = wsconnect();
+        console.log('ws reconnect:', ws.readyState);
+        if (ws.readyState == 1 || ws.readyState == 0) {
+          app.topage(1);
+        }
+      }
+    }, 5000);
+};
+ws.onmessage = function (evt) {
+    var message = evt.data;
+    console.log('ws recv:', message);
+    switch(message) {
+      case "online":
+        app.topage(1);
+        break;
+      case "disconnected":
+        app.close();
+        break;
+    }
+};
+
+// 自定义排序
+// https://examples.bootstrap-table.com/#column-options/sorter.html#view-source
+
+function cmp(a, b) {   
+    return (a<b?-1:(a>b?1:0));  
+}
+function versionCompare(v1, v2, options) {
+    var lexicographical = options && options.lexicographical,
+        zeroExtend = options && options.zeroExtend,
+        v1parts = v1.split('.'),
+        v2parts = v2.split('.');
+
+    function isValidPart(x) {
+        return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
+    }
+
+    if (!v1parts.every(isValidPart) || !v2parts.every(isValidPart)) {
+        return NaN;
+    }
+
+    if (zeroExtend) {
+        while (v1parts.length < v2parts.length) v1parts.push("0");
+        while (v2parts.length < v1parts.length) v2parts.push("0");
+    }
+
+    if (!lexicographical) {
+        v1parts = v1parts.map(Number);
+        v2parts = v2parts.map(Number);
+    }
+
+    for (var i = 0; i < v1parts.length; ++i) {
+        if (v2parts.length == i) {
+            return 1;
+        }
+
+        if (v1parts[i] == v2parts[i]) {
+            continue;
+        }
+        else if (v1parts[i] > v2parts[i]) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    if (v1parts.length != v2parts.length) {
+        return -1;
+    }
+
+    return 0;
+}
+function versionSorter(a, b) {
+  return versionCompare(a, b);
+}
+function parseusedtime(a) {
+  let b = a.split(":");
+  let j = 0;
+  let out = 0;
+  for (let i=b.length-1;i>=0;i--) {
+    let v = Math.floor(b[i]);
+    out = out + v * 60 ** j;
+    j++;
+  }
+  return out;
+}
+function usedtimeSorter(a, b) {
+  return parseusedtime(a) - parseusedtime(b);
+}
+function intSorter(a, b) {
+  return Math.floor(a) - Math.floor(b);
+}
+function parseSize(a) {
+  let unit = a.slice(-1);
+  let n = a.slice(0, -1);
+  n = Math.floor(n);
+  switch(unit) {
+  case 'K':
+    return n*1024;
+  case 'M':
+    return n * 1024**2;
+  case 'G':
+    return n * 1024**3;
+  }
+  return n;
+}
+function sizeSorter(a, b) {
+  return parseSize(a) - parseSize(b);
+}
+</script>
+
+</body>
+</html>
